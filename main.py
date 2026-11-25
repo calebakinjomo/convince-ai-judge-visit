@@ -8,9 +8,13 @@ Deterministic: fixed text, fixed fonts, fixed layout, seeded decoration.
 Python 3 standard library + Pillow only. No network, no randomness beyond
 a fixed seed.
 
+Run: python3 main.py — writes /output/entry.png (override with the
+ENTRY_OUTPUT environment variable). Re-running always yields the same PNG.
+
 make.fun bounty: u-shino-convince-the-ai-judge-to-visit-your-house-a-84092aee
 """
 
+import math
 import os
 import random
 import textwrap
@@ -102,8 +106,6 @@ def draw_house(draw, cx, top, scale):
     sx, sy, sr = cx + 150 * scale, top + 18 * scale, 16 * scale
     draw.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill=GOLD)
     for angle in range(0, 360, 45):
-        import math
-
         dx = math.cos(math.radians(angle))
         dy = math.sin(math.radians(angle))
         draw.line(
@@ -223,7 +225,8 @@ def build_letter():
 
 
 def main():
-    out_path = os.environ.get("ENTRY_OUTPUT", "/output/entry.png")
+    """Render the letter and write it to ENTRY_OUTPUT (default /output/entry.png)."""
+    out_path = os.environ.get("ENTRY_OUTPUT") or "/output/entry.png"
     img = build_letter()
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     img.save(out_path, format="PNG", optimize=True)
